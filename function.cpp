@@ -1,0 +1,106 @@
+#include <iostream>
+#include <fstream>
+#include "matrix.h"
+
+using namespace std;
+
+/*Funkcje dla matrixa tu będą*/
+CMatrix::CMatrix()//dziala
+{
+    data = new matrix(1,1,0.0,0.0);
+}
+CMatrix::CMatrix(unsigned nlines, unsigned ncolumns, double eleDiagonally, double element)//dziala
+{
+    data = new matrix(nlines,ncolumns,eleDiagonally,element);
+}
+CMatrix::CMatrix(unsigned nlines, unsigned ncolumns, double eleDiagonally)//dziala
+{
+    double element=0.0;
+    data = new matrix(nlines,ncolumns,eleDiagonally,element);
+}
+
+CMatrix::CMatrix(fstream& fp)
+{
+    unsigned a,b;
+    fp>>a>>b;
+    
+    for(unsigned i =0;i<a;i++)
+        for(unsigned j=0;j<b;j++)
+            fp>>data->table[i][j];
+}
+
+CMatrix::CMatrix(const CMatrix& co) //konstruktor kopiujacy
+{
+    co.data->n++;
+    data=co.data;
+}
+
+CMatrix::~CMatrix()
+{
+    if(--data->n==0) delete [] data;
+}
+CMatrix CMatrix::operator* (const CMatrix co) const //dziala
+{
+    CMatrix* pom = new CMatrix(this->data->lines,co.data->columns,0.0,0.0);
+    if (this->data->columns != co.data->lines) 
+    {
+        throw WrongDim();
+    }
+    for(unsigned a=0; a<this->data->lines;a++)
+        for(unsigned b=0; b<co.data->columns;b++)
+            for(unsigned i=0; i<co.data->columns;i++)
+                pom->data->table[a][b] += (this->data->table[a][i]*co.data->table[i][b]);
+    return *pom;
+}
+
+CMatrix& CMatrix::operator= (const CMatrix& co)
+{
+    co.data->n++;
+    if(--data->n == 0) delete data;
+    data = co.data;
+    return *this;
+}
+ostream& operator<< (ostream& o,const CMatrix& A) //dziala
+{
+    for(unsigned i=0; i<A.data->lines;i++)
+    {
+        for(unsigned j=0;j<A.data->columns;j++)
+            o << A.data->table[i][j]<< " ";
+        o << "\n";
+    }
+    return o;
+}
+ostream& operator<< (ostream& o, fstream fp) //w budowie
+{
+    double a,b,pom;
+    fp >> a >> b;
+    for(unsigned i=0; i<a;i++)
+    {
+        for(unsigned j=0;j<b;j++)
+        {
+            fp >> pom;
+            o << pom << " ";
+        }
+        o << "\n";
+    }
+    return o;
+}
+double CMatrix::operator[] (unsigned int i) const
+{
+    cout << "Zobaczy sie czy operator[] dziala"<<endl;
+    check(i,i);
+    return data->table[i][i];
+}
+void CMatrix::check(unsigned int i, unsigned int j) const
+{
+    if(data->lines<=i || data->columns<=j) throw WrongDim();
+}
+double CMatrix::read(unsigned int i, unsigned int j) const
+{
+    return data->table[i][j];
+}
+void CMatrix::write(unsigned int i, unsigned int j, double t)
+{
+    data = data->detach();
+    data->table[i][j] = t;
+}
