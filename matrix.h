@@ -15,6 +15,7 @@ private:
     matrix* data;
 public:
     class helpful;
+    class CrefFirst;
     CMatrix();
     CMatrix(fstream& fp);
     CMatrix(unsigned lines, unsigned columns, double eleDiagonally, double element);
@@ -24,6 +25,7 @@ public:
     CMatrix operator* (const CMatrix co) const;
     CMatrix& operator= (const CMatrix& co);
     double operator[] (unsigned int i) const;
+    CrefFirst operator[] (unsigned int i);
     friend ostream& operator<<(ostream&, const CMatrix&);
     void check(unsigned int i, unsigned int j) const;
     double read(unsigned int i, unsigned int j) const;
@@ -78,7 +80,7 @@ struct CMatrix::matrix
 		columns = ncolumns;
 		
 		for(unsigned i =0; i<lines;i++)
-                    for(unsigned j=0; j<columns;j++)
+		    for(unsigned j=0; j<columns;j++)
 			{
 				t[i][j] = ntable[i][j];
 			}
@@ -94,9 +96,32 @@ struct CMatrix::matrix
 class CMatrix::helpful
 {
   friend class CMatrix;
-  CMatrix s;
-  unsigned raw, col;
+  CMatrix& s;
+  unsigned lin, col;
 public:
-   
+  
+};
+
+class CMatrix::CrefFirst
+{
+  friend class CMatrix;
+  CMatrix& s;
+  unsigned lin, col;
+public:
+    operator double() const
+  {
+    cout << "operator double() const"<<endl;
+    return s.read(lin,col);
+  }
+  rcstring::Cref& operator = (double a)
+  {
+    cout << "void operator = (double a)"<<endl;
+    s.write(lin,col,a);
+    return *this;
+  }
+  rcstring::Cref& operator = (const Cref& ref)
+  {
+    return operator= ((double)ref);
+  }
 };
 #endif

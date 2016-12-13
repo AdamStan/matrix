@@ -3,6 +3,8 @@
 #include "matrix.h"
 /*Napisz definicję klasy implementującej macierz ze zliczaniem odwołań tak, aby mogła ona zostać użyta w przykładzie zaprezentowanym w pliku test_matrix.cpp.
 Jako pliku wymaganego w funkcji main() użyj matrix.dat. Rozważ możliwości modyfikacji funkcji main() tak aby wystąpiły wyszczególnione w niej wyjątki. */
+/*Klasy pomocnicze do stwierdzenia: odczyt czy zapis?*/
+/*No jeszcze nie ogarniasz pomocniczej klasy array?*/
 
 using namespace std;
 
@@ -39,11 +41,10 @@ int main()
 		f1.close();				//First two values in this file specify the matrix dimensions
 		cout << B << endl;
 		
-		/*S = B;						//Assign B to S
-		S[0][0] = 1.4;					//Modify S
+		S = B;						//Assign B to S
+		/*S[0][0] = 1.4;					//Modify S
 		cout << "S[0][0]=" << S[0][0] << endl;		//Verify S
-		cout << "B[0][0]=" << B[0][0] << endl;	//Verify B
-		f1.close();*/
+		cout << "B[0][0]=" << B[0][0] << endl;	//Verify B*/
 	}
 	catch(IndexOutOfRange& e) 
 	{
