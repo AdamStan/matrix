@@ -43,7 +43,7 @@ CMatrix::~CMatrix()
 }
 CMatrix CMatrix::operator* (const CMatrix co) const //dziala
 {
-    CMatrix* pom = new CMatrix(this->data->lines,co.data->columns,0.0,0.0);
+    CMatrix pom(this->data->lines,co.data->columns,0.0,0.0);
     if (this->data->columns != co.data->lines) 
     {
         throw WrongDim();
@@ -51,8 +51,8 @@ CMatrix CMatrix::operator* (const CMatrix co) const //dziala
     for(unsigned a=0; a<this->data->lines;a++)
         for(unsigned b=0; b<co.data->columns;b++)
             for(unsigned i=0; i<co.data->columns;i++)
-                pom->data->table[a][b] += (this->data->table[a][i]*co.data->table[i][b]);
-    return *pom;
+                pom.data->table[a][b] += (this->data->table[a][i]*co.data->table[i][b]);
+    return pom;
 }
 
 CMatrix& CMatrix::operator= (const CMatrix& co)
