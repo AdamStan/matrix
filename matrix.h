@@ -25,7 +25,6 @@ public:
     CMatrix& operator= (const CMatrix& co);
     double operator[] (unsigned int i) const;
     friend ostream& operator<<(ostream&, const CMatrix&);
-    friend ostream& operator<<(ostream&, fstream);
     void check(unsigned int i, unsigned int j) const;
     double read(unsigned int i, unsigned int j) const;
     void write(unsigned int i, unsigned int j, double t);

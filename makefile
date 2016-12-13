@@ -12,4 +12,4 @@ main.o: test_matrix.cpp matrix.h
 .PHONY: clean
 
 clean:
-	-rm function.o main.o matrix
+	-rm function.o main.o matrix.out

@@ -24,9 +24,11 @@ CMatrix::CMatrix(fstream& fp)
     unsigned a,b;
     fp>>a>>b;
     
+    data = new matrix(a,b,0.0,0.0);
+    
     for(unsigned i =0;i<a;i++)
-        for(unsigned j=0;j<b;j++)
-            fp>>data->table[i][j];
+      for(unsigned j=0;j<b;j++)
+	fp>>data->table[i][j];
 }
 
 CMatrix::CMatrix(const CMatrix& co) //konstruktor kopiujacy
@@ -37,7 +39,7 @@ CMatrix::CMatrix(const CMatrix& co) //konstruktor kopiujacy
 
 CMatrix::~CMatrix()
 {
-    if(--data->n==0) delete [] data;
+    if(--data->n == 0) delete data;
 }
 CMatrix CMatrix::operator* (const CMatrix co) const //dziala
 {
@@ -66,21 +68,6 @@ ostream& operator<< (ostream& o,const CMatrix& A) //dziala
     {
         for(unsigned j=0;j<A.data->columns;j++)
             o << A.data->table[i][j]<< " ";
-        o << "\n";
-    }
-    return o;
-}
-ostream& operator<< (ostream& o, fstream fp) //w budowie
-{
-    double a,b,pom;
-    fp >> a >> b;
-    for(unsigned i=0; i<a;i++)
-    {
-        for(unsigned j=0;j<b;j++)
-        {
-            fp >> pom;
-            o << pom << " ";
-        }
         o << "\n";
     }
     return o;
