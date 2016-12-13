@@ -5,6 +5,8 @@
 Jako pliku wymaganego w funkcji main() użyj matrix.dat. Rozważ możliwości modyfikacji funkcji main() tak aby wystąpiły wyszczególnione w niej wyjątki. */
 /*Klasy pomocnicze do stwierdzenia: odczyt czy zapis?*/
 /*No jeszcze nie ogarniasz pomocniczej klasy array?*/
+/*Potrzebuje czasami nowego konstruktora matrixa dla detacha
+ matrix(wiersze,kolumny,tablica)*/
 
 using namespace std;
 
