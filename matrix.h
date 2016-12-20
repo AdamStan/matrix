@@ -2,6 +2,7 @@
 #define _MATRIX_H_
 #include <iostream>
 #include <fstream>
+//#include <valarray>
 
 using namespace std;
 
@@ -13,9 +14,10 @@ class CMatrix
 private:
     struct matrix;
     matrix* data;
+    //typedef valarray<double> ArrayDb;
 public:
-    class helpful;
     class CrefFirst;
+    class access;
     CMatrix();
     CMatrix(fstream& fp);
     CMatrix(unsigned lines, unsigned columns, double eleDiagonally, double element);
@@ -24,10 +26,10 @@ public:
     ~CMatrix();
     CMatrix operator* (const CMatrix co) const;
     CMatrix& operator= (const CMatrix& co);
-    double operator[] (unsigned int i) const;
-    CrefFirst operator[] (unsigned int i);
+    access operator[](unsigned i);
     friend ostream& operator<<(ostream&, const CMatrix&);
-    void check(unsigned int i, unsigned int j) const;
+    void check_line(unsigned int i) const;
+    void check_column(unsigned int j) const;
     double read(unsigned int i, unsigned int j) const;
     void write(unsigned int i, unsigned int j, double t);
 };
@@ -43,7 +45,9 @@ struct CMatrix::matrix
 		n=1;
 		lines = nlines;
 		columns = ncolumns;
-
+		
+		if(columns == 0 || lines == 0) throw WrongDim(); 
+		  
 		table = new double* [nlines];
 		for(unsigned i=0; i<lines; i++)
 			table[i] = new double [ncolumns];
@@ -55,6 +59,22 @@ struct CMatrix::matrix
 				else table[i][j] = element;
 			}
     };
+    matrix(unsigned nlines, unsigned ncolumns, double **m)
+    {
+        n=1;
+        lines = nlines;
+        columns = ncolumns;
+
+        table = new double* [nlines];
+        for(unsigned i=0; i<lines; i++)
+            table[i] = new double [ncolumns];
+
+        for(unsigned i=0; i<lines;i++)
+            for(unsigned j=0; j<columns;j++)
+                {
+                    table[i][j] = m[i][j];
+                }
+    };
     ~matrix()
     {
 	for(unsigned i=0; i<lines;i++)
@@ -64,11 +84,11 @@ struct CMatrix::matrix
     matrix* detach()
     {
             if(n==1) return this;
-            matrix* now = new matrix(lines,columns,table[0][0],table[0][1]);
+            matrix* now = new matrix(lines,columns,table);
             n--;
             return now;
     }
-    void assign(unsigned int nlines, unsigned int ncolumns, double** ntable)
+    /*void assign(unsigned int nlines, unsigned int ncolumns, double** ntable)
     {
 	if (nlines != lines && ncolumns != columns)
 	{
@@ -90,38 +110,58 @@ struct CMatrix::matrix
 		table = t;
 	}
 		else table = ntable;
-	}
+    }*/
 };
 
-class CMatrix::helpful
+class CMatrix::CrefFirst 
 {
   friend class CMatrix;
   CMatrix& s;
   unsigned lin, col;
 public:
-  
-};
-
-class CMatrix::CrefFirst
-{
-  friend class CMatrix;
-  CMatrix& s;
-  unsigned lin, col;
-public:
+    
+    CrefFirst(CMatrix& ss, unsigned ii, unsigned jj): s(ss), lin(ii), col(jj) {};
+    
     operator double() const
-  {
-    cout << "operator double() const"<<endl;
-    return s.read(lin,col);
-  }
-  rcstring::Cref& operator = (double a)
-  {
-    cout << "void operator = (double a)"<<endl;
-    s.write(lin,col,a);
-    return *this;
-  }
-  rcstring::Cref& operator = (const Cref& ref)
-  {
-    return operator= ((double)ref);
-  }
+    {
+        return s.read(lin,col);
+    }
+    CMatrix::CrefFirst& operator = (double a)
+    {
+        s.write(lin,col,a);
+        return *this;
+    }
+    CMatrix::CrefFirst& operator = (const CrefFirst& ref) //tu chyba też trzeba użyć tego Array
+    {
+        return operator= ((double)ref);
+    }
+};
+
+class CMatrix::access
+{
+    friend class CMatrix;
+    CMatrix& buf;
+    unsigned lin,col,thei;
+    double **newtable;
+public:
+    access(CMatrix& bufNowe,unsigned what): buf(bufNowe)
+    {
+	lin=bufNowe.data->lines;
+	col=bufNowe.data->columns;
+        thei = what;
+        
+        newtable = new double* [col];        
+	for(unsigned j=0;j<col;j++)
+		newtable[j]=bufNowe.data->table[thei]+j;
+    }
+    ~access()
+    {
+        delete [] newtable;
+    }
+    CrefFirst operator[] (unsigned thej) const
+    {
+      if(thej>=col) throw IndexOutOfRange();  
+      return CrefFirst(buf,thei,thej);
+    }
 };
 #endif

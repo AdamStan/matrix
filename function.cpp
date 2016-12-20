@@ -72,15 +72,18 @@ ostream& operator<< (ostream& o,const CMatrix& A) //dziala
     }
     return o;
 }
-double CMatrix::operator[] (unsigned int i) const
+CMatrix::access CMatrix::operator[](unsigned i)
 {
-    cout << "Zobaczy sie czy operator[] dziala"<<endl;
-    check(i,i);
-    return data->table[i][i];
+    if(i>=data->lines)throw IndexOutOfRange();
+    return access(*this, i);
 }
-void CMatrix::check(unsigned int i, unsigned int j) const
+void CMatrix::check_line(unsigned int i) const
 {
-    if(data->lines<=i || data->columns<=j) throw WrongDim();
+    if(data->lines<=i) throw IndexOutOfRange();
+}
+void CMatrix::check_column(unsigned int j) const
+{
+    if(data->columns<=j) throw IndexOutOfRange();
 }
 double CMatrix::read(unsigned int i, unsigned int j) const
 {
