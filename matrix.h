@@ -49,16 +49,23 @@ struct CMatrix::matrix
 		if(columns == 0 || lines == 0) throw WrongDim(); 
 		  
 		table = new double* [nlines];
-		for(unsigned i=0; i<lines; i++)
-		{
-		    try
-		    {
+		unsigned i;
+		table[0] = NULL;
+		try
+	    {
+			for(i=0; i<lines; i++)
 				table[i] = new double [ncolumns];
-		    }
-		    catch(bad_alloc)
-		    {
-				cout << " Out of memory" <<endl;
-		    };
+	    }
+	    catch(...)
+		{
+			for( ; i>0 ; i--)
+				delete [] table[i];
+
+			delete [] table[0];
+			delete [] table;
+			
+			cout << " Out of memory" <<endl;
+			throw;
 		}
 		
 		for(unsigned i=0; i<lines;i++)
