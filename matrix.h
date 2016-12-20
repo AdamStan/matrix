@@ -82,8 +82,24 @@ struct CMatrix::matrix
         columns = ncolumns;
 
         table = new double* [nlines];
-        for(unsigned i=0; i<lines; i++)
-            table[i] = new double [ncolumns];
+        unsigned i;
+		table[0] = NULL;
+		try
+	    {
+			for(i=0; i<lines; i++)
+				table[i] = new double [ncolumns];
+	    }
+	    catch(...)
+		{
+			for( ; i>0 ; i--)
+				delete [] table[i];
+
+			delete [] table[0];
+			delete [] table;
+			
+			cout << " Out of memory" <<endl;
+			throw;
+		}
 
         for(unsigned i=0; i<lines;i++)
             for(unsigned j=0; j<columns;j++)
