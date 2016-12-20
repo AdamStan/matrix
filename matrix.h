@@ -49,7 +49,7 @@ struct CMatrix::matrix
 		if(columns == 0 || lines == 0) throw WrongDim(); 
 		  
 		table = new double* [nlines];
-		unsigned i;
+	    unsigned i;
 		table[0] = NULL;
 		try
 	    {
@@ -100,7 +100,7 @@ struct CMatrix::matrix
 			cout << " Out of memory" <<endl;
 			throw;
 		}
-
+		
         for(unsigned i=0; i<lines;i++)
             for(unsigned j=0; j<columns;j++)
                 {
@@ -173,23 +173,13 @@ class CMatrix::access
 {
     friend class CMatrix;
     CMatrix& buf;
-    unsigned lin,col,thei;
-    double **newtable;
+    unsigned thei;
 public:
     access(CMatrix& bufNowe,unsigned what): buf(bufNowe)
     {
-	lin=bufNowe.data->lines;
-	col=bufNowe.data->columns;
-        thei = what;
-        
-        newtable = new double* [col];        
-	for(unsigned j=0;j<col;j++)
-		newtable[j]=bufNowe.data->table[thei]+j;
+		thei = what;	
     }
-    ~access()
-    {
-        delete [] newtable;
-    }
+    
     CrefFirst operator[] (unsigned thej) const
     {
       if(thej>=col) throw IndexOutOfRange();  
