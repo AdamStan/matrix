@@ -50,13 +50,22 @@ struct CMatrix::matrix
 		  
 		table = new double* [nlines];
 		for(unsigned i=0; i<lines; i++)
-			table[i] = new double [ncolumns];
-
+		{
+		    try
+		    {
+				table[i] = new double [ncolumns];
+		    }
+		    catch(bad_alloc)
+		    {
+				cout << " Out of memory" <<endl;
+		    };
+		}
+		
 		for(unsigned i=0; i<lines;i++)
 		    for(unsigned j=0; j<columns;j++)
 			{
-				if(i==j) table[i][j] = eleDiagonally;
-				else table[i][j] = element;
+			    if(i==j) table[i][j] = eleDiagonally;
+			    else table[i][j] = element;
 			}
     };
     matrix(unsigned nlines, unsigned ncolumns, double **m)
@@ -115,9 +124,9 @@ struct CMatrix::matrix
 
 class CMatrix::CrefFirst 
 {
-  friend class CMatrix;
-  CMatrix& s;
-  unsigned lin, col;
+	friend class CMatrix;
+	CMatrix& s;
+	unsigned lin, col;
 public:
     
     CrefFirst(CMatrix& ss, unsigned ii, unsigned jj): s(ss), lin(ii), col(jj) {};
