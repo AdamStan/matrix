@@ -45,34 +45,16 @@ struct CMatrix::matrix
 		n=1;
 		lines = nlines;
 		columns = ncolumns;
-		
-		if(columns == 0 || lines == 0) throw WrongDim(); 
-		  
-		table = new double* [nlines];
-	    unsigned i;
-		table[0] = NULL;
-		try
-	    {
-			for(i=0; i<lines; i++)
-				table[i] = new double [ncolumns];
-	    }
-	    catch(...)
-		{
-			for( ; i>0 ; i--)
-				delete [] table[i];
 
-			delete [] table[0];
-			delete [] table;
-			
-			cout << " Out of memory" <<endl;
-			throw;
-		}
-		
+		table = new double* [nlines];
+		for(unsigned i=0; i<lines; i++)
+			table[i] = new double [ncolumns];
+
 		for(unsigned i=0; i<lines;i++)
 		    for(unsigned j=0; j<columns;j++)
 			{
-			    if(i==j) table[i][j] = eleDiagonally;
-			    else table[i][j] = element;
+				if(i==j) table[i][j] = eleDiagonally;
+				else table[i][j] = element;
 			}
     };
     matrix(unsigned nlines, unsigned ncolumns, double **m)
@@ -82,25 +64,9 @@ struct CMatrix::matrix
         columns = ncolumns;
 
         table = new double* [nlines];
-        unsigned i;
-		table[0] = NULL;
-		try
-	    {
-			for(i=0; i<lines; i++)
-				table[i] = new double [ncolumns];
-	    }
-	    catch(...)
-		{
-			for( ; i>0 ; i--)
-				delete [] table[i];
+        for(unsigned i=0; i<lines; i++)
+            table[i] = new double [ncolumns];
 
-			delete [] table[0];
-			delete [] table;
-			
-			cout << " Out of memory" <<endl;
-			throw;
-		}
-		
         for(unsigned i=0; i<lines;i++)
             for(unsigned j=0; j<columns;j++)
                 {
@@ -120,7 +86,7 @@ struct CMatrix::matrix
             n--;
             return now;
     }
-    /*void assign(unsigned int nlines, unsigned int ncolumns, double** ntable)
+    void assign(unsigned int nlines, unsigned int ncolumns, double** ntable)
     {
 	if (nlines != lines && ncolumns != columns)
 	{
@@ -142,14 +108,14 @@ struct CMatrix::matrix
 		table = t;
 	}
 		else table = ntable;
-    }*/
+	}
 };
 
 class CMatrix::CrefFirst 
 {
-	friend class CMatrix;
-	CMatrix& s;
-	unsigned lin, col;
+  friend class CMatrix;
+  CMatrix& s;
+  unsigned lin, col;
 public:
     
     CrefFirst(CMatrix& ss, unsigned ii, unsigned jj): s(ss), lin(ii), col(jj) {};
@@ -177,13 +143,13 @@ class CMatrix::access
 public:
     access(CMatrix& bufNowe,unsigned what): buf(bufNowe)
     {
-		thei = what;	
+        thei = what;
     }
+    ~access(){ }
     
     CrefFirst operator[] (unsigned thej) const
     {
-      if(thej>=col) throw IndexOutOfRange();  
-      return CrefFirst(buf,thei,thej);
+        return CrefFirst(buf,thei,thej);
     }
 };
 #endif

@@ -74,16 +74,16 @@ ostream& operator<< (ostream& o,const CMatrix& A) //dziala
 }
 CMatrix::access CMatrix::operator[](unsigned i)
 {
-    if(i>=data->lines)throw IndexOutOfRange();
+    if(i>data->lines)throw IndexOutOfRange();
     return access(*this, i);
 }
 void CMatrix::check_line(unsigned int i) const
 {
-    if(data->lines<=i) throw IndexOutOfRange();
+    if(data->lines<=i) throw WrongDim();
 }
 void CMatrix::check_column(unsigned int j) const
 {
-    if(data->columns<=j) throw IndexOutOfRange();
+    if(data->columns<=j) throw WrongDim();
 }
 double CMatrix::read(unsigned int i, unsigned int j) const
 {
