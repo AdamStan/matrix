@@ -2,7 +2,6 @@
 #define _MATRIX_H_
 #include <iostream>
 #include <fstream>
-//#include <valarray>
 
 using namespace std;
 
@@ -14,7 +13,6 @@ class CMatrix
 private:
     struct matrix;
     matrix* data;
-    //typedef valarray<double> ArrayDb;
 public:
     class CrefFirst;
     class access;
@@ -45,10 +43,22 @@ struct CMatrix::matrix
 		n=1;
 		lines = nlines;
 		columns = ncolumns;
-
+		
+		unsigned int i = 0;
 		table = new double* [nlines];
-		for(unsigned i=0; i<lines; i++)
-			table[i] = new double [ncolumns];
+		try
+		{
+			for(; i<lines; i++)
+				table[i] = new double [ncolumns];
+		}
+		catch(const bad_alloc &e)
+		{
+			for( ; i>0; )
+			{
+				delete [] table[--i];
+			}
+			delete [] table;
+		}
 
 		for(unsigned i=0; i<lines;i++)
 		    for(unsigned j=0; j<columns;j++)
@@ -62,11 +72,23 @@ struct CMatrix::matrix
         n=1;
         lines = nlines;
         columns = ncolumns;
-
+        /**Allocation*/
+        unsigned int i = 0;
         table = new double* [nlines];
-        for(unsigned i=0; i<lines; i++)
-            table[i] = new double [ncolumns];
-
+        try
+        {
+            for(; i<lines; i++)
+                table[i] = new double [ncolumns];
+        }
+        catch(const bad_alloc &e)
+        {
+            for( ; i>0; )
+            {
+                    delete [] table[--i];
+            }
+            delete [] table;
+        }
+        /**Insertion*/
         for(unsigned i=0; i<lines;i++)
             for(unsigned j=0; j<columns;j++)
                 {
@@ -76,7 +98,7 @@ struct CMatrix::matrix
     ~matrix()
     {
 	for(unsigned i=0; i<lines;i++)
-	  delete [] table[i];
+            delete [] table[i];
 	delete [] table;
     };
     matrix* detach()
